@@ -1,0 +1,83 @@
+# phrase<TAB>activity   (lower-case substring match, first hit wins; order = priority)
+duplicate of	Duplicate identified
+closing as duplicate	Duplicate identified
+closing this as	Closure announced
+closing this	Closure announced
+closing since	Closure announced
+closing due to	Closure announced
+i'll close	Closure announced
+i will close	Closure announced
+i'm going to close	Closure announced
+feel free to close	Closure announced
+please close	Closure announced
+can't reproduce	Could not reproduce
+cannot reproduce	Could not reproduce
+can not reproduce	Could not reproduce
+couldn't reproduce	Could not reproduce
+unable to reproduce	Could not reproduce
+works for me	Could not reproduce
+i can reproduce	Issue reproduced
+i was able to reproduce	Issue reproduced
+i can confirm	Issue reproduced
+can confirm	Issue reproduced
+same issue here	Issue reproduced
+same problem here	Issue reproduced
+has been fixed	Fix merged
+was fixed	Fix merged
+fixed in	Fix merged
+fixed by	Fix merged
+merged	Fix merged
+opened a pr	Fix proposed
+opened a pull request	Fix proposed
+created a pr	Fix proposed
+submitted a pr	Fix proposed
+filed a pr	Fix proposed
+i'll open a pr	Fix proposed
+i will open a pr	Fix proposed
+pr is up	Fix proposed
+will be released	Release announced
+will be part of pip	Release announced
+next release	Release announced
+released	Release announced
+report this to	Redirected to other project
+report it to	Redirected to other project
+file an issue with	Redirected to other project
+raise this with	Redirected to other project
+not a pip issue	Redirected to other project
+not a pip bug	Redirected to other project
+upstream	Redirected to other project
+could you please provide	Information requested
+can you provide	Information requested
+could you provide	Information requested
+please provide	Information requested
+please share	Information requested
+please post	Information requested
+can you share	Information requested
+could you share	Information requested
+can you try	Information requested
+could you try	Information requested
+please try	Information requested
+workaround	Workaround suggested
+work around	Workaround suggested
+you can use	Workaround suggested
+you could use	Workaround suggested
+try using	Workaround suggested
+try running	Workaround suggested
+upgrade pip	Upgrade advised
+upgrade to	Upgrade advised
+latest version of pip	Upgrade advised
+the root cause	Cause diagnosed
+caused by	Cause diagnosed
+this is because	Cause diagnosed
+the problem is	Cause diagnosed
+the issue is	Cause diagnosed
+this fixed	Resolution confirmed
+that fixed	Resolution confirmed
+it works now	Resolution confirmed
+works now	Resolution confirmed
+that worked	Resolution confirmed
+problem solved	Resolution confirmed
+i tested	Testing performed
+i tried	Testing performed
+tested on	Testing performed
+tested with	Testing performed

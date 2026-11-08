@@ -1,0 +1,14 @@
+Cause diagnosed
+Closure announced
+Could not reproduce
+Duplicate identified
+Fix merged
+Fix proposed
+Information requested
+Issue reproduced
+Redirected to other project
+Release announced
+Resolution confirmed
+Testing performed
+Upgrade advised
+Workaround suggested

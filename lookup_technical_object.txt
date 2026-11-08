@@ -1,0 +1,22 @@
+pip
+setuptools
+wheel
+virtualenv
+venv
+requirements.txt
+pyproject.toml
+pylock.toml
+resolver
+cache
+proxy
+index url
+pypi
+windows
+macos
+linux
+conda
+uv
+poetry
+sdist
+metadata
+build backend

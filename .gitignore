@@ -1,0 +1,22 @@
+# data (not published)
+*.csv
+*.xes
+Note_collection/
+results_*/
+
+# large models and tools
+*.bin
+tools/
+stanford-corenlp*/
+
+# generated figures and archives
+*.png
+*.zip
+
+# environment and system files
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
