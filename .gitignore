@@ -1,5 +1,5 @@
 # data (not published)
-*.csv
+
 *.xes
 Note_collection/
 results_*/
