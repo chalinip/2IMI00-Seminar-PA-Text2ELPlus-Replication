@@ -31,22 +31,22 @@ def apply_regex_rules(collection_filepath, output_file1):
     df = pd.DataFrame()
 
     for dir in folders:
-        for f in glob.glob(collection_filepath + '/' + dir + "/*.txt"):  # [G3]
+        for f in glob.glob(collection_filepath + '/' + dir + "/*.txt"):  
             with open(f, "r+") as inputfile:
                 con = inputfile.read()
                 x = con.split("\n")
 
-                pattern = re.compile(r"(.*"+GH_DATE+")")  # [G1]
-                frontkeyonlypattern = re.compile(  # [G1]
+                pattern = re.compile(r"(.*"+GH_DATE+")")  
+                frontkeyonlypattern = re.compile(  
                     r"(.*)"+GH_DATE+r"([ ][0-9]*[:][0-9]{2}[ ]*(AM|A\.M\.|am|a\.m\.|PM|P\.M\.|pm|p\.m\.))?")
-                backkeyonlypattern = re.compile(  # [G1]
+                backkeyonlypattern = re.compile(  
                     GH_DATE+r"([ ][0-9]*[:][0-9]{2}[ ]*(AM|A\.M\.|am|a\.m\.|PM|P\.M\.|pm|p\.m\.))?(.*)")
-                datetimepattern = re.compile(  # [G1]
+                datetimepattern = re.compile( 
                     r"("+GH_DATE+r"([ ][0-9]*[:][0-9]{2}[ ]*(AM|A\.M\.|am|a\.m\.|PM|P\.M\.|pm|p\.m\.))?)")
-                pattern1 = re.compile(r"("+GH_DATE+".*)")  # [G1]
+                pattern1 = re.compile(r"("+GH_DATE+".*)")  
 
                 for k in x:
-                    if k.startswith("Date/Time:"): continue  # [G2] metadata header, not text
+                    if k.startswith("Date/Time:"): continue  
                     m = pattern.findall(k)
                     m1 = pattern1.findall(k)
                     for i in m:
@@ -78,7 +78,7 @@ def apply_regex_rules(collection_filepath, output_file1):
     df.to_csv(output_file1)
 
 #Extract events from event specific notes 
-LOOKUP = []  # [G4] filled in __main__ from lookup_github_activity.tsv
+LOOKUP = []  
 def extract_specific_notes(collection_filepath, output_file2):
     folders = [f for f in listdir(collection_filepath)]
     df = pd.DataFrame()
@@ -86,26 +86,26 @@ def extract_specific_notes(collection_filepath, output_file2):
     table1 = {"HADM_ID": [], "Activity": [], "Timestamp": [], "Note": []}
     for dir in folders:
 
-        for f in glob.glob(collection_filepath + '/' + dir + "/*_Comment.txt"):  # [G3]
+        for f in glob.glob(collection_filepath + '/' + dir + "/*_Comment.txt"):  
             with open(f, "r+") as inputfile:
 
                 con = inputfile.read()
 
                 pattern1 = re.compile(r"Date/Time:(.*)")
-                m2 = next((a for ph, a in LOOKUP if ph in con.lower().split("\n", 2)[-1]), "")  # [G4] replaces Test: line
+                m2 = next((a for ph, a in LOOKUP if ph in con.lower().split("\n", 2)[-1]), "")  
 
                 rem_characters = ["['", "']", "at"]
                 m1 = pattern1.findall(con)
 
                 for i in rem_characters:
-                    m1 = str(m1).replace(i, "")  # [G4] not applied to m2: removing "at" mangles labels
+                    m1 = str(m1).replace(i, "") 
 
                 table1["HADM_ID"].append(dir)
                 table1["Activity"].append(m2)
                 table1["Timestamp"].append(m1)
                 table1["Note"].append(os.path.basename(f))
 
-    df = pd.DataFrame(table1)  # [B1] replaces df.append, which was inside the removed Radiology loop
+    df = pd.DataFrame(table1) 
     df = df[["HADM_ID", "Activity", "Timestamp", "Note"]]
     df = df.dropna(how='all')
 
@@ -133,8 +133,8 @@ def refine_events(input_csv, exclude_list, stopword_list, output_csv):
       #  d['Activity'] = d['Activity'].str.removesuffix(j)
 
 
-    d['Activity'] = d['Activity'].str.replace('^[^a-zA-Z]*', '', regex=True)  # [B2]
-    d['Activity'] = d['Activity'].str.replace('^and*', '', regex=True)  # [B2]
+    d['Activity'] = d['Activity'].str.replace('^[^a-zA-Z]*', '', regex=True)  
+    d['Activity'] = d['Activity'].str.replace('^and*', '', regex=True) 
 
     d = d[d['Activity'].str.len() > 0]
   
@@ -150,7 +150,7 @@ def refine_events(input_csv, exclude_list, stopword_list, output_csv):
         out_df['Activity'] = out_df['Activity'].str.replace(re.escape(i),'')
     '''
     out_df= out_df.dropna(how='all')
-    out_df['Activity'] = out_df['Activity'].str.replace('^[^a-zA-Z]*', '', regex=True)  # [B2]
+    out_df['Activity'] = out_df['Activity'].str.replace('^[^a-zA-Z]*', '', regex=True) 
     out_df = out_df[out_df['Activity'].str.len() > 0]
     out_df=out_df[~out_df['Activity'].str.lower().isin([x.lower() for x in suffix_list])]
     out_df.to_csv(output_csv)
@@ -169,7 +169,7 @@ def get_all_events(general_events_file, specific_event_file, all_events):
     d3['Timestamp'] = d3['Timestamp'].str.replace(re.escape("-"), '/')
     d3['Timestamp'] = d3['Timestamp'].str.replace(re.escape("at"), ' ')
     d3['Timestamp'] = d3['Timestamp'].str.replace(re.escape("**"), '')
-    d3['Timestamp'] = [_norm_ts(t, n, h) for t, n, h in zip(d3['Timestamp'], d3['Note'], d3['HADM_ID'])]  # [G5]
+    d3['Timestamp'] = [_norm_ts(t, n, h) for t, n, h in zip(d3['Timestamp'], d3['Note'], d3['HADM_ID'])]  
     d3 = d3.dropna(subset=['Timestamp'])
     d3=d3.drop_duplicates()
     d3=d3.sort_values(['HADM_ID', 'Timestamp'], ascending=[True, True])
@@ -177,7 +177,7 @@ def get_all_events(general_events_file, specific_event_file, all_events):
 
     
 COLLECTION = "Note_collection"
-def _norm_ts(t, note, case):  # [G5] GitHub date -> 'YYYY-MM-DD[ HH:MM:SS]'; year-less date takes the note's year
+def _norm_ts(t, note, case):  
     t = str(t).strip()
     if re.match(r"20\d\d/\d\d/\d\d \d\d:\d\d:\d\d$", t): t = t.replace("/", "-")
     if re.match(r"20\d\d-\d\d-\d\d \d\d:\d\d:\d\d$", t): return t
@@ -197,8 +197,7 @@ def tag_NER_lookup(filepath, lookup_p1, lookup_p2, out_csv):
     def body(text):
         return "\n".join(l for l in text.split("\n") if not l.strip().lower().startswith(HEADERS))
 
-    # [G11] lookup_p1 / lookup_p2 no longer used here: lookup phrases name events in
-    # extract_specific_notes, so they are not added again as "hospital/medical activity" attributes
+
 
     df = pd.DataFrame()
     case_id, attribute, value, source = [], [], [], []
@@ -275,8 +274,7 @@ def dep_parse_attribute(filepath, out_dep_csv):
 
                         if len(k) > 3:
 
-                            if True:  # [B4] was: with CoreNLPClient(...) as client  (new server per sentence)
-                        # set up the client
+                            if True:  
                                 add_dp = ""
 
                             # submit the request to the server
@@ -321,7 +319,7 @@ def dep_parse_attribute(filepath, out_dep_csv):
                         dep_p.append(add_dp)
                         source.append(os.path.basename(f))
 
-    df['HADM_ID']=case_id  # [B12] moved out of the loop
+    df['HADM_ID']=case_id  
     df['Dependency']=dep_p
     df['Note']=source
 
@@ -350,13 +348,13 @@ def extract_case_attributes(dependenc_csv, extracted_attr_csv,all_events_csv, al
                     Entitiy_ls.append(k[2])
                     value_ls.append(k[4])
                     case_ls.append(str(row.HADM_ID))
-    d3['HADM_ID']= case_ls  # [B13] moved out of the loop
+    d3['HADM_ID']= case_ls  #  moved out of the loop
     d3['Entity']=Entitiy_ls
     d3['Value']=value_ls
     case_df=d2[d2['Note'].str.contains("Description.txt")]  # [G3]
     df_e=pd.read_csv(all_events_csv)
     events_l = df_e['Activity'].drop_duplicates().to_list()
-    # [G12] MIMIC exclude lists removed ('admit', 'discharge', 'Date of Birth', '+2  Left:+2')
+    # MIMIC exclude lists removed ('admit', 'discharge', 'Date of Birth', '+2  Left:+2')
       
 
     new_df = pd.concat([case_df , d3])
@@ -422,7 +420,7 @@ def extract_event_attributes( dependency_csv, extracted_attributes_csv, specific
 def merge_attributes(all_case_att_csv,  list_case_attributes):
     d1 = pd.read_csv(all_case_att_csv)
   
-    final_filtered_attr = ["pip version", "python version", "os"]  # [G13] was ["service", "sex", "date of birth"]
+    final_filtered_attr = ["pip version", "python version", "os"]  # instead of ["service", "sex", "date of birth"]
     d1["Value"]=d1["Value"].astype(str).str.strip()
     d1['Entity'] = d1['Entity'].str.strip()
     d1["Value"]=d1["Value"].str.lstrip()
@@ -453,7 +451,7 @@ def delete_garbage_files():
 
 
 if __name__ == '__main__':
-    C = COLLECTION  # [G3] paths
+    C = COLLECTION  
     LOOKUP.extend(pd.read_csv("lookup_github_activity.tsv", sep="\t", names=["p", "a"], comment="#").itertuples(index=False, name=None))  # This lookup is a deviation
     apply_regex_rules(C, "extracted_events.csv")
     extract_specific_notes(C, "specific_events.csv") # deviation because of the lookup_github_activity.tsv file
@@ -463,5 +461,5 @@ if __name__ == '__main__':
     dep_parse_attribute(C, "all_dependency.csv")
     extract_case_attributes("all_dependency.csv", "all_attributes.csv", 'all_events.csv', "case_attr_final.csv")
     extract_event_attributes("all_dependency.csv", "all_attributes.csv", 'specific_events.csv', 'all_events.csv', "event_attr_final.csv")
-    # [G6] extract_echo_event_attr, extract_radiology_event_attr, extract_event_attr_event_notes removed (MIMIC Echo/Radiology header fields)
+ 
     merge_attributes("case_attr_final.csv", "case_attr_final_list.csv")
