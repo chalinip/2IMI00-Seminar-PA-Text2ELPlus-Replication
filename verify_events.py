@@ -57,7 +57,7 @@ def calcute_semantic_similarity(pre_trained_model_path, input_csv, semantic_simi
     lemmatizer = WordNetLemmatizer()
     
     model_path =pre_trained_model_path
-    if model_path.startswith('sbert:'):  # [E2] Sentence-BERT: reported as 'BERT' in paper Table 8, absent from the original code
+    if model_path.startswith('sbert:'):  
         from sentence_transformers import SentenceTransformer
         class _SBERT:  # same interface as sent2vec: embed_sentence() returns shape (1, d)
             def __init__(self, name): self.m = SentenceTransformer(name)
@@ -67,7 +67,7 @@ def calcute_semantic_similarity(pre_trained_model_path, input_csv, semantic_simi
     else:
         model = sent2vec.Sent2vecModel()
     try:
-        model.load_model(model_path, inference_mode=__import__('sys').platform == 'darwin')  # [E1] Mac: skip unused output matrix (less RAM, same vectors); Linux: normal load (inference mode needs shared memory)
+        model.load_model(model_path, inference_mode=__import__('sys').platform == 'darwin')  
     except Exception as e:
         print(e)
     print('model successfully loaded')
@@ -85,7 +85,7 @@ def calcute_semantic_similarity(pre_trained_model_path, input_csv, semantic_simi
         text = text.lower()
         tokens = [token for token in simple_preprocess(text, min_len=0, max_len=float("inf")) if
                   token not in stop_words]
-        # tokens = [token for token in word_tokenize(text) if token not in punctuation and token not in stop_words]
+
 
         return ' '.join(tokens)
 
@@ -100,12 +100,10 @@ def calcute_semantic_similarity(pre_trained_model_path, input_csv, semantic_simi
 
         vec_1 = model.embed_sentence(w_l1)
         vec_2 = model.embed_sentence(w_l2)
-        cosine_sim = 1 - distance.cosine(vec_1.ravel(), vec_2.ravel()) if vec_1.any() and vec_2.any() else 0.0  # [B7] sent2vec returns (1,d); scipy needs 1-D
+        cosine_sim = 1 - distance.cosine(vec_1.ravel(), vec_2.ravel()) if vec_1.any() and vec_2.any() else 0.0  
         li.append(cosine_sim)
 
-    d0['Sim_Bio'] = li  # [B8] was 'Similarity_Tweet', but get_matched_events reads 'Sim_Bio'
-    #d0['Similarity_Wiki'] = li
-    #d0['Similarity_Bio'] = li
+    d0['Sim_Bio'] = li  
 
     d0.to_csv(semantic_similariy_csv)
 
@@ -214,7 +212,7 @@ def compare_case_attributes(Original_case_attr, case_att_csv):
 
     new_df = d1.merge(comp_attr, on =["HADM_ID"])
     new_df['Date of Birth'] = pd.to_datetime(new_df['Date of Birth'], utc=True)
-    #new_df[['Ex_Date', 'Ex_Time']] = new_df["Date of Birth"].str.split(" ", expand=True, n=1)
+
     new_df['DOB'] = pd.to_datetime(new_df['DOB'], utc=True)
     new_df['Date of Birth']=new_df['Date of Birth'].dt.date
     new_df['DOB']=new_df['DOB'].dt.date
@@ -232,16 +230,16 @@ def compare_case_attributes(Original_case_attr, case_att_csv):
     
 if __name__ == '__main__':
     import sys
-    pre_trained_model_path = sys.argv[1]  # e.g. wiki_unigrams.bin  or  sbert:all-MiniLM-L6-v2
+    pre_trained_model_path = sys.argv[1]  
     compare_events("all_events.csv", "event_log_evaluation.csv", "matched_events.csv", "time_matched_events.csv")
     calcute_semantic_similarity(pre_trained_model_path, "time_matched_events.csv", "semantic_similariy.csv")
     n_ex = len(pd.read_csv("all_events.csv"))
-    for k in (1, 2):  # Table 8: mu+sigma and mu+2sigma
+    for k in (1, 2): 
         th, m = get_matched_events("semantic_similariy.csv", f"matched_events_k{k}.csv", f"timestamp_updated_k{k}.csv", k)
         print(f"threshold mu+{k}sigma = {th:.3f}: matched {len(m)} of {n_ex} extracted events")
     new = add_new_events("matched_events_k2.csv", "all_events.csv", "event_log_evaluation.csv", "enhanced_log.csv")
     print("new events added:", len(new))
-    analyse_attr("case_attr_final.csv", "event_attr_final.csv", "case_attr_analysis.csv", "event_attr_analysis.csv")  # paper Sect. 5.2.2: attributes in >= 50% of cases
-    # [G7] not run: analyse_attr/merge_attributes/compare_case_attributes (DOB, GENDER: no GitHub counterpart)
+    analyse_attr("case_attr_final.csv", "event_attr_final.csv", "case_attr_analysis.csv", "event_attr_analysis.csv")  
+  
     convert_csv_xes('event_log_evaluation.csv', 'eventlog.xes')
     convert_csv_xes('enhanced_log.csv', 'enhanced_eventlog.xes')
